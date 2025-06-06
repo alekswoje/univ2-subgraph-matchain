@@ -8,6 +8,7 @@
     "build": "run-s codegen && graph build",
     "buildonly": "graph build",
     "deploy:alchemy": "graph deploy --node https://subgraphs.alchemy.com/api/subgraphs/deploy --ipfs https://ipfs.satsuma.xyz",
+    "deploy:final": "graph deploy --node http://subgraph.mobula.io:8000 --ipfs https://ipfs.satsuma.xyz --access-token",
     "codegen": "graph codegen --output-dir src/types/",
     "create-local": "graph create davekaj/uniswap --node http://127.0.0.1:8020",
     "deploy-local": "graph deploy davekaj/uniswap --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
