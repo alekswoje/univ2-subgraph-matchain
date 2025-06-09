@@ -1,5 +1,5 @@
 # The Player entity tracks all-time stats for a single address.
-type Player @entity {
+type Player @entity(immutable: false) {
   # Player's wallet address
   id: ID!
   # Total number of flips created or accepted by this player
@@ -13,7 +13,7 @@ type Player @entity {
 }
 
 # Tracks a player's total volume for a specific token.
-type PlayerTokenBalance @entity {
+type PlayerTokenBalance @entity(immutable: false) {
   # Composite ID: {playerAddress}-{tokenAddress}
   id: ID!
   # Link to the player
@@ -25,7 +25,7 @@ type PlayerTokenBalance @entity {
 }
 
 # The Flip entity stores details for a single flip event.
-type Flip @entity {
+type Flip @entity(immutable: false) {
   # The flip's unique ID from the contract
   id: ID!
   # The player who created the flip
@@ -49,7 +49,7 @@ type Flip @entity {
 }
 
 # A single entity to track global platform statistics.
-type PlatformData @entity {
+type PlatformData @entity(immutable: false) {
   # A constant ID, e.g., "1", to ensure it's a singleton
   id: ID!
   # Total number of flips on the platform
@@ -59,7 +59,7 @@ type PlatformData @entity {
 }
 
 # Stores information about a token.
-type Token @entity {
+type Token @entity(immutable: false) {
   # Token address
   id: ID!
   # Token symbol, e.g., "BNB"

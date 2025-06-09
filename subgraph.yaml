@@ -1,19 +1,18 @@
-specVersion: 0.0.8
-description: Uniswap is a decentralized protocol for automated token exchange on Ethereum.
-repository: https://github.com/Uniswap/uniswap-v2-subgraph
+specVersion: 0.0.9
+description: A subgraph for the Coinflip dApp on Matchain
 schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: MatchainCoinflip-asdadfsafaf
-    network: matchain
+    name: CoinflipGame
+    network: matchain-mainnet
     source:
       address: "0x52d4d96a3ba8Fe800394C3270af5De9f3d0A49fd"
       abi: CoinflipGame
       startBlock: 30944813
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       entities:
         - Player
@@ -23,10 +22,10 @@ dataSources:
         - name: CoinflipGame
           file: ./abis/coinflip-game-abi.json
       eventHandlers:
-        - event: FlipCreated(indexed uint256,indexed address,uint256)
+        - event: FlipCreated(indexed uint256,indexed address,uint256,indexed address)
           handler: handleFlipCreated
         - event: FlipAccepted(indexed uint256,indexed address)
           handler: handleFlipAccepted
-        - event: FlipResolved(indexed uint256,indexed address,uint256,uint256)
+        - event: FlipResolved(indexed uint256,indexed address,uint256,uint256,indexed address)
           handler: handleFlipResolved
       file: ./src/mappings.ts
