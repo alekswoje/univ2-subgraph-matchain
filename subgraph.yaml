@@ -5,11 +5,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: CoinflipGame
-    network: matchain-mainnet
+    network: matchain
     source:
-      address: "0x52d4d96a3ba8Fe800394C3270af5De9f3d0A49fd"
+      address: "0xb71348d7035bC86bbb82471d2963789863E64b60"
       abi: CoinflipGame
-      startBlock: 30944813
+      startBlock: 32157694
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.8
@@ -28,4 +28,6 @@ dataSources:
           handler: handleFlipAccepted
         - event: FlipResolved(indexed uint256,indexed address,uint256,uint256,indexed address)
           handler: handleFlipResolved
+        - event: FlipCancelled(indexed uint256)
+          handler: handleFlipCancelled
       file: ./src/mappings.ts

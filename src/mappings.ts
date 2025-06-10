@@ -3,6 +3,8 @@ import {
   FlipCreated,
   FlipResolved,
   FlipAccepted,
+  FlipCancelled,
+  CoinflipGame,
 } from "../generated/MatchainCoinflip-asdadfsafaf/CoinflipGame"
 import { Flip } from "../generated/schema"
 import {
@@ -28,6 +30,13 @@ export function handleFlipCreated(event: FlipCreated): void {
   flip.amount = event.params.amount
   flip.createdAt = event.block.timestamp
   flip.createdTx = event.transaction.hash
+  flip.cancelled = false
+
+  // We need to call the contract to see if a session was used.
+  const contract = CoinflipGame.bind(event.address)
+  const contractFlip = contract.flips(event.params.id)
+  flip.creatorUsedSession = contractFlip.getCreatorUsedSession()
+
   flip.save()
   log.info("Flip {} saved", [flipId]);
 
@@ -60,6 +69,12 @@ export function handleFlipAccepted(event: FlipAccepted): void {
   const acceptor = loadOrInitializePlayer(event.params.acceptor)
   
   flip.acceptor = acceptor.id
+
+  // We need to call the contract to see if a session was used.
+  const contract = CoinflipGame.bind(event.address)
+  const contractFlip = contract.flips(event.params.id)
+  flip.acceptorUsedSession = contractFlip.getAcceptorUsedSession()
+
   flip.save()
   log.info("Flip {} updated with acceptor {}", [flipId, acceptor.id]);
 
@@ -109,4 +124,29 @@ export function handleFlipResolved(event: FlipResolved): void {
   creator.save()
   acceptor.save()
   log.info("--- Finished FlipResolved: id {} ---", [event.params.id.toString()]);
+}
+
+export function handleFlipCancelled(event: FlipCancelled): void {
+  log.info("--- Handling FlipCancelled: id {} ---", [event.params.id.toString()]);
+  const flipId = event.params.id.toString()
+  const flip = Flip.load(flipId)
+
+  if (flip === null) {
+    log.error("CRITICAL: Cancelled a flip that doesn't exist: {}", [flipId])
+    return
+  }
+
+  flip.cancelled = true
+  // The contract marks cancelled flips as "resolved" to remove them from the active list
+  flip.resolvedAt = event.block.timestamp 
+  flip.resolvedTx = event.transaction.hash
+  flip.save()
+  log.info("Flip {} cancelled", [flipId]);
+
+  // Note: Since a cancelled flip is not won or lost by anyone, we don't update player win/loss stats here.
+  // The creator's stake is returned to them by the contract, but this is an on-chain balance change
+  // that we don't need to track explicitly in these entities unless we add withdrawal/balance logic.
+  // We also don't need to adjust totalFlips, because the flip was still created.
+  
+  log.info("--- Finished FlipCancelled: id {} ---", [event.params.id.toString()]);
 } 

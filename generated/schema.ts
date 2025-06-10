@@ -352,6 +352,45 @@ export class Flip extends Entity {
       this.set("resolvedTx", Value.fromBytes(<Bytes>value));
     }
   }
+
+  get cancelled(): boolean {
+    let value = this.get("cancelled");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set cancelled(value: boolean) {
+    this.set("cancelled", Value.fromBoolean(value));
+  }
+
+  get creatorUsedSession(): boolean {
+    let value = this.get("creatorUsedSession");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set creatorUsedSession(value: boolean) {
+    this.set("creatorUsedSession", Value.fromBoolean(value));
+  }
+
+  get acceptorUsedSession(): boolean {
+    let value = this.get("acceptorUsedSession");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set acceptorUsedSession(value: boolean) {
+    this.set("acceptorUsedSession", Value.fromBoolean(value));
+  }
 }
 
 export class PlatformData extends Entity {

@@ -46,6 +46,12 @@ type Flip @entity(immutable: false) {
   createdTx: Bytes!
   # The transaction hash where the flip was resolved
   resolvedTx: Bytes
+  # True if the flip was cancelled
+  cancelled: Boolean!
+  # True if the creator used the session (gas-less) feature
+  creatorUsedSession: Boolean!
+  # True if the acceptor used the session (gas-less) feature
+  acceptorUsedSession: Boolean
 }
 
 # A single entity to track global platform statistics.
