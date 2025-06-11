@@ -8,6 +8,8 @@ type Player @entity(immutable: false) {
   wins: BigInt!
   # Total number of flips lost
   losses: BigInt!
+  # Player's total winnings, updated on FlipResolved
+  totalWinnings: BigInt!
   # Aggregated volume per token
   tokenBalances: [PlayerTokenBalance!]! @derivedFrom(field: "player")
 }
@@ -22,6 +24,8 @@ type PlayerTokenBalance @entity(immutable: false) {
   token: Token!
   # Total volume of this token wagered by the player
   totalVolume: BigInt!
+  # Current session balance for this token
+  sessionBalance: BigInt!
 }
 
 # The Flip entity stores details for a single flip event.
@@ -62,6 +66,8 @@ type PlatformData @entity(immutable: false) {
   totalFlips: BigInt!
   # Total unique players
   uniquePlayers: BigInt!
+  # Total amount of pending withdrawals on the platform.
+  totalPendingWithdrawals: BigInt!
 }
 
 # Stores information about a token.
@@ -74,4 +80,32 @@ type Token @entity(immutable: false) {
   decimals: Int!
   # Total volume wagered across the platform for this token
   totalVolume: BigInt!
+  # Total pending withdrawals for this token
+  pendingWithdrawals: BigInt!
+}
+
+type SessionDeposit @entity(immutable: true) {
+  id: ID! # transaction hash
+  player: Player!
+  token: Token!
+  amount: BigInt!
+  timestamp: BigInt!
+}
+
+type SessionWithdrawal @entity(immutable: true) {
+  id: ID! # transaction hash
+  player: Player!
+  token: Token!
+  amount: BigInt!
+  timestamp: BigInt!
+}
+
+type PendingWithdrawal @entity(immutable: false) {
+  id: ID! # player address + token address
+  player: Player!
+  token: Token!
+  amount: BigInt!
+  createdAt: BigInt!
+  isWithdrawn: Boolean!
+  withdrawnTx: Bytes
 }

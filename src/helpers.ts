@@ -57,6 +57,7 @@ export function loadOrInitializePlayer(address: Address): Player {
     player.totalFlips = ZERO_BI
     player.wins = ZERO_BI
     player.losses = ZERO_BI
+    player.totalWinnings = ZERO_BI
     player.save()
 
     const platform = loadOrInitializePlatform()
@@ -74,6 +75,7 @@ export function loadOrInitializePlatform(): PlatformData {
         platform = new PlatformData(PLATFORM_DATA_ID)
         platform.totalFlips = ZERO_BI
         platform.uniquePlayers = ZERO_BI
+        platform.totalPendingWithdrawals = ZERO_BI
         platform.save()
     }
     return platform as PlatformData
@@ -85,9 +87,15 @@ export function loadOrInitializeToken(tokenAddress: Address): Token {
   if (token === null) {
     log.info("Creating new token: {}", [tokenAddress.toHexString()]);
     token = new Token(tokenAddress.toHexString())
-    token.symbol = fetchTokenSymbol(tokenAddress)
-    token.decimals = fetchTokenDecimals(tokenAddress).toI32()
+    if (tokenAddress.toHexString() == "0x0000000000000000000000000000000000000000") {
+      token.symbol = "BNB"
+      token.decimals = 18
+    } else {
+      token.symbol = fetchTokenSymbol(tokenAddress)
+      token.decimals = fetchTokenDecimals(tokenAddress).toI32()
+    }
     token.totalVolume = ZERO_BI
+    token.pendingWithdrawals = ZERO_BI
     token.save()
   }
   return token as Token
@@ -103,6 +111,7 @@ export function loadOrInitializePlayerTokenBalance(player: Player, token: Token)
         balance.player = player.id
         balance.token = token.id
         balance.totalVolume = ZERO_BI
+        balance.sessionBalance = ZERO_BI
         balance.save()
     }
     return balance as PlayerTokenBalance
